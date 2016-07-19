@@ -2,50 +2,10 @@ var matches = [];
 var matchCanvas = document.getElementById('matchCanvas');
 var matchCounter = 1;
 var nodes = [];
-var nodeCanvas = document.getElementById('nodeCanvas');
-
-
-(function () {
-    nodeCanvas.style.width = '100%';
-    nodeCanvas.style.height = nodeCanvas.offsetWidth + 'px';
-
-    if (nodeCanvas.getContext) {
-        var context = nodeCanvas.getContext('2d');
-        context.canvas.width = nodeCanvas.offsetWidth;
-        context.canvas.height = nodeCanvas.offsetWidth;
-    }
-
-    matchCanvas.style.width = '100%';
-    matchCanvas.style.height = matchCanvas.offsetWidth + 'px';
-
-    if (matchCanvas.getContext) {
-        var context = matchCanvas.getContext('2d');
-        context.canvas.width = matchCanvas.offsetWidth;
-        context.canvas.height = matchCanvas.offsetWidth;
-    }
-})();
 
 (function () {
     window.addEventListener('resize', function() {
-        nodeCanvas.style.width = '100%';
-        nodeCanvas.style.height = nodeCanvas.offsetWidth + 'px';
-
-        if (nodeCanvas.getContext && 0 < nodes.length) {
-            var context = nodeCanvas.getContext('2d');
-            context.canvas.width = nodeCanvas.offsetWidth;
-            context.canvas.height = nodeCanvas.offsetWidth;
-            canvasNodes(nodes);
-        }
-
-        matchCanvas.style.width = '100%';
-        matchCanvas.style.height = matchCanvas.offsetWidth + 'px';
-
-        if (matchCanvas.getContext && 0 < nodes.length) {
-            var context = matchCanvas.getContext('2d');
-            context.canvas.width = matchCanvas.offsetWidth;
-            context.canvas.height = matchCanvas.offsetWidth;
-            canvasMatch(nodes, matches, eliminated, matchCounter);
-        }
+        resizeCanvas();
     })
 })();
 
@@ -53,27 +13,7 @@ var nodeCanvas = document.getElementById('nodeCanvas');
 function generate() {
     reset();
     document.getElementById('data').className = '';
-
-
-    (function () {
-        nodeCanvas.style.width = '100%';
-        nodeCanvas.style.height = nodeCanvas.offsetWidth + 'px';
-
-        if (nodeCanvas.getContext) {
-            var context = nodeCanvas.getContext('2d');
-            context.canvas.width = nodeCanvas.offsetWidth;
-            context.canvas.height = nodeCanvas.offsetWidth;
-        }
-
-        matchCanvas.style.width = '100%';
-        matchCanvas.style.height = matchCanvas.offsetWidth + 'px';
-
-        if (matchCanvas.getContext) {
-            var context = matchCanvas.getContext('2d');
-            context.canvas.width = matchCanvas.offsetWidth;
-            context.canvas.height = matchCanvas.offsetWidth;
-        }
-    })();
+    resizeCanvas()
 
     var prob = document.getElementById('connectionProb').value || 0.4;
     if (0.4 === prob) {
@@ -85,11 +25,7 @@ function generate() {
     }
 
     generatNodes(prob, count);
-
-    tableNodes(nodes);
-    
-    canvasNodes(nodes);
-
+    tableNodes(nodes);    
     generateMatches(nodes);
 }
 
@@ -104,6 +40,18 @@ function reset() {
     eliminated = [];
     possibleMatches = [];
     matchCounter = 1;
+}
+
+// Resize Canvas
+function resizeCanvas() {
+    matchCanvas.style.width = '100%';
+    matchCanvas.style.height = matchCanvas.offsetWidth + 'px';
+
+    if (matchCanvas.getContext) {
+        var context = matchCanvas.getContext('2d');
+        context.canvas.width = matchCanvas.offsetWidth;
+        context.canvas.height = matchCanvas.offsetWidth;
+    }
 }
 
 // Generate nodes
@@ -143,63 +91,6 @@ function tableNodes(nodes) {
         tr.appendChild(connections);
         table.appendChild(tr);
     }
-}
-
-// Draw nodeCanvas
-function canvasNodes(nodes) {
-    if (nodeCanvas.getContext) {
-        var context = nodeCanvas.getContext('2d');
-        var axis = (nodeCanvas.offsetWidth - 2);
-        var halfAxis = (axis / 2);
-        var count = nodes.length;
-        var fieldRadius = halfAxis * (1 - (1 / count));
-        var elementRadius = halfAxis * (1 / count) - 2;
-        var fontSize = elementRadius / 2;
-        var textPos = fontSize / 1.7;
-        var textPos10 = fontSize / 0.9;
-
-        context.clearRect(0,0,axis,axis);
-
-        // Get node centers
-        for (var i in nodes) {
-            radians = 2 / (count - 1) * i * Math.PI;
-            nodes[i].x = fieldRadius * Math.cos(radians) + halfAxis + 1;
-            nodes[i].y = fieldRadius * Math.sin(radians) + halfAxis + 1;
-        }
-
-        // Draw connections
-        for (var i in nodes) {
-            for (var j in nodes[i].connections) {
-                context.beginPath();
-                context.moveTo(nodes[i].x, nodes[i].y);
-                context.lineTo(nodes[nodes[i].connections[j]].x, nodes[nodes[i].connections[j]].y);
-                var gradiant = context.createLinearGradient(nodes[i].x, nodes[i].y, nodes[nodes[i].connections[j]].x, nodes[nodes[i].connections[j]].y);
-                gradiant.addColorStop(0, 'black');   
-                gradiant.addColorStop(1, 'transparent');
-                context.strokeStyle = gradiant;
-                context.lineWidth = 5;
-                context.stroke();
-            }
-        }
-
-        for (var i in nodes) {
-            context.beginPath();
-            context.arc(nodes[i].x, nodes[i].y, elementRadius, 0, Math.PI * 2, true);
-            context.fillStyle = '#337ab7';
-            context.lineWidth = 1;
-            context.strokeStyle = '#2e6da4';
-            context.fill();
-            context.stroke();
-
-            context.fillStyle = '#FFF';
-            context.font = elementRadius + 'px Helvetica';
-            if (10 > nodes[i].id) {
-                context.fillText(nodes[i].id, nodes[i].x - textPos, nodes[i].y + textPos);
-            } else {
-                context.fillText(nodes[i].id, nodes[i].x - textPos10, nodes[i].y + textPos);
-            }
-        }
-    }    
 }
 
 // Generate matches
