@@ -228,8 +228,6 @@ function generateMatches(nodes) {
     if (0 < matches.length) {
         tableMatch(matches, matchCounter);
         canvasMatch(nodes, matches, [], matchCounter);
-    }
-    if (0 < matches.length) {
         document.getElementById('down').disabled = false;
     }
 }
