@@ -258,9 +258,9 @@ function canvasMatch(nodes, matches, eliminated, matchCounter) {
         let color = {};
 
         if (matches.length < matchCounter || 0 === matches.length) {
-            color.fill = '#f2dede';
+            color.fill = '#ac2925';
             color.stroke = '#ac2925';
-            color.font = '#ac2925';
+            color.font = '#fff';
         } else {
             color.fill = '#1b809e';
             color.stroke = '#2e6da4';
@@ -316,13 +316,13 @@ function canvasMatch(nodes, matches, eliminated, matchCounter) {
             if (eliminated.includes(nodes[i].id)) {
                 context.beginPath();
                 context.arc(nodes[i].x, nodes[i].y, elementRadius, 0, Math.PI * 2, true);
-                context.fillStyle = '#dff0d8';
+                context.fillStyle = '#398439';
                 context.lineWidth = 1;
                 context.strokeStyle = '#398439';
                 context.fill();
                 context.stroke();
 
-                context.fillStyle = '#398439';
+                context.fillStyle = '#fff';
                 context.font = elementRadius + 'px Helvetica';
                 if (10 > nodes[i].id) {
                     context.fillText(nodes[i].id, nodes[i].x - textPos, nodes[i].y + textPos);
