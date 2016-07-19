@@ -387,3 +387,8 @@ function getEliminated(c) {
 
     return eliminated;
 }
+
+function hide() {
+    document.getElementById('data').className = 'hidden';
+    reset();
+}
