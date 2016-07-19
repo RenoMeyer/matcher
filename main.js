@@ -118,9 +118,9 @@ function generateMatches(nodes) {
     // Draw table and canvas
     if (0 < matches.length) {
         tableMatch(matches, matchCounter);
-        canvasMatch(nodes, matches, [], matchCounter);
         document.getElementById('down').disabled = false;
     }
+        canvasMatch(nodes, matches, [], matchCounter);
 }
 
 // Get matches
@@ -255,18 +255,30 @@ function canvasMatch(nodes, matches, eliminated, matchCounter) {
             }
         }
 
+        let color = {};
+
+        if (matches.length < matchCounter || 0 === matches.length) {
+            color.fill = '#f2dede';
+            color.stroke = '#ac2925';
+            color.font = '#ac2925';
+        } else {
+            color.fill = '#1b809e';
+            color.stroke = '#2e6da4';
+            color.font = '#fff';
+        }
+
         // Draw nodes
         for (var i in nodes) {
             if (!eliminated.includes(nodes[i].id)) {
                 context.beginPath();
                 context.arc(nodes[i].x, nodes[i].y, elementRadius, 0, Math.PI * 2, true);
-                context.fillStyle = '#1b809e';
+                context.fillStyle = color.fill;
                 context.lineWidth = 1;
-                context.strokeStyle = '#2e6da4';
+                context.strokeStyle = color.stroke;
                 context.fill();
                 context.stroke();
 
-                context.fillStyle = '#FFF';
+                context.fillStyle = color.font;
                 context.font = elementRadius + 'px Helvetica';
                 if (10 > nodes[i].id) {
                     context.fillText(nodes[i].id, nodes[i].x - textPos, nodes[i].y + textPos);
@@ -304,13 +316,13 @@ function canvasMatch(nodes, matches, eliminated, matchCounter) {
             if (eliminated.includes(nodes[i].id)) {
                 context.beginPath();
                 context.arc(nodes[i].x, nodes[i].y, elementRadius, 0, Math.PI * 2, true);
-                context.fillStyle = '#D3D3D3';
+                context.fillStyle = '#dff0d8';
                 context.lineWidth = 1;
-                context.strokeStyle = '#b3b3b3';
+                context.strokeStyle = '#398439';
                 context.fill();
                 context.stroke();
 
-                context.fillStyle = '#FFF';
+                context.fillStyle = '#398439';
                 context.font = elementRadius + 'px Helvetica';
                 if (10 > nodes[i].id) {
                     context.fillText(nodes[i].id, nodes[i].x - textPos, nodes[i].y + textPos);
