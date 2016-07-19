@@ -260,7 +260,7 @@ function canvasMatch(nodes, matches, eliminated, matchCounter) {
             if (!eliminated.includes(nodes[i].id)) {
                 context.beginPath();
                 context.arc(nodes[i].x, nodes[i].y, elementRadius, 0, Math.PI * 2, true);
-                context.fillStyle = '#337ab7';
+                context.fillStyle = '#1b809e';
                 context.lineWidth = 1;
                 context.strokeStyle = '#2e6da4';
                 context.fill();

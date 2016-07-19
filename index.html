@@ -33,66 +33,75 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <h2>Demo</h2>
-                            <p>Mittels der nachstehenden Eingabefeldern können Nodes und dazugehörige Connections erzeugt werden. Dabei kann man die Anzahl Nodes, sowie die Wahrscheinlichkeit für die jeweiligen Connections manuell einstellen. Per Default wird mit den Werten 7, bzw. 0.4 gerechnet.</p>
+                            <p>Mittels der nachstehenden Eingabefeldern können Nodes und dazugehörige Connections erzeugt werden. Dabei kann man die Anzahl Nodes, sowie die Wahrscheinlichkeit für die jeweiligen Connections manuell einstellen.</p>
                             <p>Die Ergebnisse werden sowohl grafisch, wie auch tabelarisch aufgezeigt. Falls mehrere Matches entstehen, kann mittels der aufgeführten "Up-" und "Down-" Buttons durch die einzelnen Matches iteriert werden.</p>
+                            <br>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-12 col-sm-4">
-                            <input id="nodeCount" type="number" class="form-control" placeholder="Anzahl Nodes" min="3" max="112">
-                        </div>
-                        <div class="col-xs-12 col-sm-4">
-                            <input id="connectionProb" type="number" step="0.05" class="form-control" placeholder="Connections Wahrscheinlichkeit" min="0.05" max="0.95">
-                        </div>
-                        <div class="col-xs-12 col-sm-4">
-                            <button onclick='generate()' class="btn btn-primary col-xs-12">Nodes generieren</button>
+                        <div class="col-xs-12">
+                            <div class="jumbotron">
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        <input id="nodeCount" type="number" class="form-control  btn-lg" placeholder="Anzahl Nodes" min="3" max="112">
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <input id="connectionProb" type="number" step="0.05" class="form-control btn-lg" placeholder="Connections Wahrscheinlichkeit" min="0.05" max="0.95">
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <button onclick='generate()' class="btn btn-primary col-xs-12 btn-lg">Nodes generieren</button>
+                                    </div>
+                                    <div class="col-xs-12 text-right">
+                                        <small class="text-muted">Per Default wird mit den Werten 7 und 0.4 gerechnet.</small>
+                                    </div>
+                                </div>
+                                <div id="data" class="hidden">
+                                    <br>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-6">
+                                            <canvas id="matchCanvas" style="border: 1px solid #CCC"></canvas>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+                                            <div class="btn-group">
+                                                <button id="up" onclick='upMatch()' class="btn btn-primary">
+                                                    <span class="glyphicon glyphicon-triangle-top"></span>
+                                                </button>
+                                                <button id="down" onclick='downMatch()' class="btn btn-primary">
+                                                    <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                                </button>
+                                            </div>                                    
+                                            <h3>Matches</h3>
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Match</th>
+                                                        <th>Nodes</th>
+                                                        <th>Distanz</th>
+                                                    </tr>                                    
+                                                </thead>
+                                                <tbody id="matchTable">
+                                                </tbody>
+                                            </table>
+                                            <h3>Nodes</h3>
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Node</th>
+                                                        <th>Connections</th>
+                                                    </tr>                                    
+                                                </thead>
+                                                <tbody id="nodesTable">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <br>
-                    <div id="data" class="hidden">
-                        <div class="row">
-                            <div class="col-xs-12 col-md-6">
-                                <canvas id="matchCanvas" style="border: 1px solid #CCC"></canvas>
-                            </div>
-                            <div class="col-xs-12 col-md-6">
-                                <div class="btn-group">
-                                    <button id="up" onclick='upMatch()' class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-triangle-top"></span>
-                                    </button>
-                                    <button id="down" onclick='downMatch()' class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-triangle-bottom"></span>
-                                    </button>
-                                </div>                                    
-                                <h3>Matches</h3>
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Match</th>
-                                            <th>Nodes</th>
-                                            <th>Distanz</th>
-                                        </tr>                                    
-                                    </thead>
-                                    <tbody id="matchTable">
-                                    </tbody>
-                                </table>
-                                <h3>Nodes</h3>
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Node</th>
-                                            <th>Connections</th>
-                                        </tr>                                    
-                                    </thead>
-                                    <tbody id="nodesTable">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <br>
-                        <hr>
-                        <br>
-                    </div>
-                </section>
+                    </section>
                 <section id="code">
                     <div class="row">
                         <div class="col-xs-12">
