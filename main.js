@@ -52,6 +52,8 @@ function resizeCanvas() {
         context.canvas.width = matchCanvas.offsetWidth;
         context.canvas.height = matchCanvas.offsetWidth;
     }
+
+    canvasMatch(nodes, matches, eliminated=[], matchCounter);
 }
 
 // Generate nodes
