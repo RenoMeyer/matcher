@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>matcher</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    </head>
+    <body>
+        <div id="app" class="container">
+            <div id="main">
+                <h1>Matcher Problem</h1>
+                <p>Ähnlich wie beim "Rundreiseproblem", handelt es sich beim <strong>Matcher Problem</strong> um ein kombinatorisches <strong>Optimierungsproblem</strong>. Die Ausgangslage bilden <strong>Nodes</strong> (Knoten) mit beliebig vielen, direktionalen <strong>Connections</strong> (Kanten) zu anderen Nodes. Das Problem besteht nun darin, <strong>geschlossene Kreisläufe</strong> zu finden, welche von einem ausgehenden Node über Connections zu einer/mehreren benachbarte(n) Node(s) wieder zum ausgehenden Node zurückführen. Die Kreisläufe sollen dabei möglichst kurz sein und jeder Node kann höchstens in einem Kreislauf - hier <strong>Match</strong> genannt - vorkommen.</p>
+                <p>Die Komplexität besteht darin, dass jeder Node maximal <strong><em>n - 1</em></strong> Connections haben kann, womit sich die Anzahl möglicher Kreisläufe bei jeder Erweiterung <strong>exponentiell</strong> vergrössern kann!</p>
+                <section id="problem">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h2>Szenario</h2>
+                            <p>Ein Szenario für dieses Problem könnte folgendermassen aussehen: In einer fiktiven, geschlossenen Gesellschaft werden Dienstleistungen nicht mit Geld, sondern mit Gegenleistungen bezahlt. Im Idealfall werden also Dienstleistungen direkt gegeneinander ausgetauscht, ganz im Sinne von "quit pro quo". Es ist jedoch eher Wahrscheinlich, dass der Nachfrager <strong>B</strong> die geforderte Gegenleistung des Anbieters <strong>A</strong> nicht befriedigen kann. Um dieses Ungleichgewicht aufzuheben muss also der Kreis der Beteiligten erweitert werden. Es wäre z.B. möglich, dass <strong>A</strong> die Leistung für <strong>B</strong> erbringt, da dieser eine Leistung für <strong>C</strong> erbringt, welcher wiederum eine Leistung für <strong>A</strong> erbringt. Somit würde sich der Kreislauf schliessen: A -> B -> C -> A.</p>
+                        </div>
+                    </div>
+                </section>
+                <section id="solution">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h2>Lösungansatz</h2>
+                            <p>Der entwickelte Algorithmus beruht auf einer rekursiven Funktion, welche den Kreis bei jedem Durchgang um eine Ebene erweitert. Dabei werden jeweils alle möglichen Matches geprüft und gegebenenfalls gespeichert. Nodes, welche keine ausgehenden Kanten haben, oder bereits einen Match bilden, werden als eliminiert betrachtet, was den Vorgang optimiert.</p>
+                            <p>Nachstehend befinden sich die relevanten Funktionen. Die Kommentare sollen helfen, die einzelnen Schritte nachvollziehen zu können.</p>
+
+<!-- HTML generated using hilite.me --><div style="background: #eeeedd; overflow:auto;width:auto;"><pre style="margin: 0; line-height: 125%"><span style="color: #228B22">// Generate matches</span>
+<span style="color: #8B008B; font-weight: bold">function</span> generateMatches(nodes) {
+    <span style="color: #8B008B; font-weight: bold">var</span> possibleMatches = [];
+    <span style="color: #8B008B; font-weight: bold">var</span> eliminated = [];
+    <span style="color: #8B008B; font-weight: bold">var</span> cycle = <span style="color: #B452CD">0</span>;
+
+    <span style="color: #228B22">// Create initial possibleMatches objects and eliminated array</span>
+    <span style="color: #8B008B; font-weight: bold">for</span> (<span style="color: #8B008B; font-weight: bold">var</span> i <span style="color: #8B008B; font-weight: bold">in</span> nodes) {
+        <span style="color: #8B008B; font-weight: bold">if</span> (<span style="color: #B452CD">0</span> &lt; nodes[i].connections.length) {
+            possibleMatches.push({
+                nodes: [],
+                currentNode: nodes[i].id,
+                startNode: nodes[i].id,
+            });
+        } <span style="color: #8B008B; font-weight: bold">else</span> {
+            eliminated.push(nodes[i].id);
+        }
+    }
+
+    <span style="color: #228B22">// Get matches</span>
+    getMatches(possibleMatches, eliminated, cycle);
+
+    <span style="color: #228B22">// Draw table and canvas</span>
+    <span style="color: #8B008B; font-weight: bold">if</span> (<span style="color: #B452CD">0</span> &lt; matches.length) {
+        tableMatch(matches, matchCounter);
+        canvasMatch(nodes, matches, [], matchCounter);
+    }
+    <span style="color: #8B008B; font-weight: bold">if</span> (<span style="color: #B452CD">0</span> &lt; matches.length) {
+        <span style="color: #658b00">document</span>.getElementById(<span style="color: #CD5555">&#39;down&#39;</span>).disabled = <span style="color: #8B008B; font-weight: bold">false</span>;
+    }
+}
+
+<span style="color: #228B22">// Get matches</span>
+<span style="color: #8B008B; font-weight: bold">function</span> getMatches(possibleMatches, eliminated, cycle) {
+    <span style="color: #8B008B; font-weight: bold">let</span> poMatches = [];
+    <span style="color: #8B008B; font-weight: bold">let</span> pMatches = [];
+
+    <span style="color: #228B22">// Check if new match still possible (more than 2 nodes)</span>
+    <span style="color: #8B008B; font-weight: bold">if</span> (eliminated.length &lt; nodes.length - <span style="color: #B452CD">2</span>) {
+
+        <span style="color: #228B22">// Loop through current possible matches</span>
+        <span style="color: #8B008B; font-weight: bold">for</span> (<span style="color: #8B008B; font-weight: bold">var</span> i <span style="color: #8B008B; font-weight: bold">in</span> possibleMatches) {
+
+            <span style="color: #228B22">// Make sure possibleMatches is defined</span>
+            <span style="color: #8B008B; font-weight: bold">if</span> (possibleMatches[i] &amp;&amp; <span style="color: #B452CD">0</span> &lt; nodes[possibleMatches[i].currentNode].connections.length) {
+                
+                <span style="color: #228B22">// Loop through connection of each possible match</span>
+                <span style="color: #8B008B; font-weight: bold">for</span> (<span style="color: #8B008B; font-weight: bold">var</span> j <span style="color: #8B008B; font-weight: bold">in</span> nodes[possibleMatches[i].currentNode].connections) {
+
+                    <span style="color: #228B22">// Check if connection is not eliminated</span>
+                    <span style="color: #8B008B; font-weight: bold">if</span> (!eliminated.includes(nodes[possibleMatches[i].currentNode].connections[j])) {
+                        <span style="color: #8B008B; font-weight: bold">var</span> newNodes = possibleMatches[i].nodes.concat(nodes[possibleMatches[i].currentNode].connections[j])
+                        <span style="color: #8B008B; font-weight: bold">var</span> newCurrentNode = nodes[possibleMatches[i].currentNode].connections[j];
+                        <span style="color: #228B22">// Push extended possible match to poMatch array</span>
+                        poMatches.push({
+                            nodes: newNodes,
+                            currentNode: newCurrentNode,
+                            startNode: possibleMatches[i].startNode,
+                        })
+                    }
+                }                
+            }
+        }
+
+        <span style="color: #228B22">// Iterate through poMatches</span>
+        pMatches = poMatches.map(<span style="color: #8B008B; font-weight: bold">function</span>(pm) {
+
+            <span style="color: #228B22">// Check for matches</span>
+            <span style="color: #8B008B; font-weight: bold">if</span> (pm.nodes.includes(pm.startNode)) {
+
+                <span style="color: #228B22">// Check if any of the nodes is eliminated</span>
+                <span style="color: #8B008B; font-weight: bold">var</span> elim = <span style="color: #8B008B; font-weight: bold">false</span>;
+                <span style="color: #8B008B; font-weight: bold">for</span> (<span style="color: #8B008B; font-weight: bold">var</span> m <span style="color: #8B008B; font-weight: bold">in</span> pm.nodes) {
+                    <span style="color: #8B008B; font-weight: bold">if</span> (eliminated.includes(pm.nodes[m])) elim = <span style="color: #8B008B; font-weight: bold">true</span>;
+                }
+
+                <span style="color: #228B22">// If not, add to matches and all involved nodes to eliminated</span>
+                <span style="color: #8B008B; font-weight: bold">if</span> (!elim) {
+                    pm.id = matches.length + <span style="color: #B452CD">1</span>;
+                    pm.nodes.unshift(pm.nodes.pop());
+                    matches.push(pm);
+                    <span style="color: #658b00">Array</span>.prototype.push.apply(eliminated, pm.nodes);
+                }
+            } <span style="color: #8B008B; font-weight: bold">else</span> <span style="color: #8B008B; font-weight: bold">if</span> (pm) {
+
+                <span style="color: #228B22">// Assign possible match to pMatches</span>
+                <span style="color: #8B008B; font-weight: bold">return</span> <span style="color: #658b00">Object</span>.assign({}, pm, pm.nodes.concat());
+            }
+        })
+    }
+
+    <span style="color: #228B22">// Call getMatches recursively for nodes.length times</span>
+    <span style="color: #8B008B; font-weight: bold">if</span> (nodes.length &gt; ++cycle) {
+        getMatches(pMatches, eliminated, cycle);
+    }
+}
+</pre></div>
+
+
+
+
+                        </div>
+                    </div>
+                </section>
+                <section id="demo">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h2>Demo</h2>
+                            <p>Mittels der nachstehenden Eingabefeldern können Nodes und dazugehörige Connections erzeugt werden. Dabei kann man die Anzahl Nodes, sowie die Wahrscheinlichkeit für die jeweiligen Connections manuell einstellen. Per Default wird mit den Werten 7, bzw. 0.4 gerechnet.</p>
+                            <p>Die Ergebnisse werden sowohl grafisch, wie auch tabelarisch aufgezeigt. Falls mehrere Matches entstehen, kann mittels der aufgeführten "Up-" und "Down-" Buttons durch die einzelnen Matches iteriert werden.</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4">
+                            <input id="nodeCount" type="number" class="form-control" placeholder="Anzahl Nodes" min="3" max="112">
+                        </div>
+                        <div class="col-xs-12 col-sm-4">
+                            <input id="connectionProb" type="number" step="0.05" class="form-control" placeholder="Connections Wahrscheinlichkeit" min="0.05" max="0.95">
+                        </div>
+                        <div class="col-xs-12 col-sm-4">
+                            <button onclick='generate()' class="btn btn-primary col-xs-12">Nodes generieren</button>
+                        </div>
+                    </div>
+                    <br>
+                    <div id="data" class="hidden">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <canvas id="nodeCanvas" style="border: 1px solid #CCC"></canvas>
+                                <h3>Nodes</h3>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Node</th>
+                                            <th>Connections</th>
+                                        </tr>                                    
+                                    </thead>
+                                    <tbody id="nodesTable">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <canvas id="matchCanvas" style="border: 1px solid #CCC"></canvas>
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <h3>Matches</h3>
+                                    </div>
+                                    <div class="col-xs-6 text-right">
+                                        <div class="btn-group">
+                                            <button id="up" onclick='upMatch()' class="btn btn-primary">
+                                                <span class="glyphicon glyphicon-triangle-top"></span>
+                                            </button>
+                                            <button id="down" onclick='downMatch()' class="btn btn-primary">
+                                                <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                            </button>
+                                        </div>                                    
+                                    </div>
+                                </div>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Match</th>
+                                            <th>Nodes</th>
+                                            <th>Distanz</th>
+                                        </tr>                                    
+                                    </thead>
+                                    <tbody id="matchTable">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>                        
+                    </div>
+                </section>
+                <br>
+                <br>
+                <br>
+            </div>
+        </div>
+        <script src="main.js"></script>
+    </body>
+</html>
