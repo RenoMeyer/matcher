@@ -31,8 +31,6 @@ function generate() {
 
 // Reset nodes and matches
 function reset() {
-    document.getElementById('nodeCount').value = '';
-    document.getElementById('connectionProb').value = '';
     document.getElementById('nodesTable').innerHTML = '';
     document.getElementById('matchTable').innerHTML = '';
     document.getElementById('up').disabled = true;
@@ -391,6 +389,8 @@ function getEliminated(c) {
 }
 
 function hide() {
+    document.getElementById('nodeCount').value = '';
+    document.getElementById('connectionProb').value = '';
     document.getElementById('data').className = 'hidden';
     reset();
 }
