@@ -1,6 +1,6 @@
 var matches = [];
 var matchCanvas = document.getElementById('matchCanvas');
-var matchCounter = 1;
+var matchCounter = 0;
 var nodes = [];
 
 (function () {
@@ -39,7 +39,7 @@ function reset() {
     matches = [];
     eliminated = [];
     possibleMatches = [];
-    matchCounter = 1;
+    matchCounter = 0;
 }
 
 // Resize Canvas
@@ -212,8 +212,6 @@ function tableMatch(matches, matchCounter) {
         tr.appendChild(distance);
         table.appendChild(tr);
     }
-
-    document.getElementById(matchCounter).className = 'warning';
 }
 
 // Draw matchCanvas
@@ -327,13 +325,22 @@ function canvasMatch(nodes, matches, eliminated, matchCounter) {
 function upMatch() {
     matchCounter--;
     var eliminated = getEliminated(matchCounter);
-    if (matchCounter == 1) {
+
+    if (matchCounter < 1) {
         document.getElementById('up').disabled = true;
-    }
-    if (matchCounter < matches.length) {
         document.getElementById(matchCounter + 1).className = '';
+    } else if (matchCounter == 1) {
+        if (document.getElementById(matchCounter + 1)) {
+            document.getElementById(matchCounter + 1).className = '';
+        }
+        document.getElementById(matchCounter).className = 'warning';        
+    } else if (matchCounter > 1) {
+        if (document.getElementById(matchCounter + 1)) {
+            document.getElementById(matchCounter + 1).className = '';
+        }
+        document.getElementById(matchCounter).className = 'warning';        
     }
-    document.getElementById(matchCounter).className = 'warning';        
+
     document.getElementById('down').disabled = false;
     canvasMatch(nodes, matches, eliminated, matchCounter);        
 }
@@ -344,12 +351,15 @@ function downMatch() {
 
     if (matchCounter == matches.length + 1) {
         document.getElementById('down').disabled = true;
-    } else {
+        document.getElementById(matchCounter - 1).className = '';
+    } else if (matchCounter == 1) {
+        document.getElementById(matchCounter).className = 'warning';        
+    } else if (matchCounter > 1) {
+        document.getElementById(matchCounter - 1).className = '';
         document.getElementById(matchCounter).className = 'warning';        
     }
 
     document.getElementById('up').disabled = false;
-    document.getElementById(matchCounter - 1).className = '';
     canvasMatch(nodes, matches, eliminated, matchCounter);        
 }
 
